@@ -1,0 +1,116 @@
+/* ============================================================================
+ * ADHD – Late Diagnosis · Design Tokens (v2 · Linear-style)
+ * ----------------------------------------------------------------------------
+ * Precise, engineered, "serious software" aesthetic. Near-black cool-tinted
+ * base, single indigo/violet accent used sparingly, crisp off-white text,
+ * tight letter-spacing on display type. Motion is crisp, not floaty.
+ *
+ * JSX layout reads from the C / TYPE / SPACE objects in slides.jsx; motion
+ * CSS reads from these vars. Keep them in sync by hand.
+ * ========================================================================= */
+
+:root {
+  /* --- Color --------------------------------------------------------------- */
+  --bg:           #0E1116;   /* near-black, faint cool tint */
+  --bg-quiet:     #0A0D11;   /* a touch deeper; slide 3 (the wall) */
+  --bg-lift:      #161A21;   /* raised surface; cards, shaded columns */
+  --bg-lift-2:    #1B202A;   /* a step above bg-lift for stacked surfaces */
+
+  --ink:          #EDEEF2;   /* crisp off-white */
+  --ink-soft:     #9AA1AD;   /* muted grey, secondary */
+  --ink-mute:     #6E7480;   /* tertiary / labels */
+
+  --rule:         rgba(237, 238, 242, 0.08);
+  --rule-strong:  rgba(237, 238, 242, 0.16);
+  --rule-bright:  rgba(237, 238, 242, 0.28);
+
+  /* The single accent: confident indigo/violet. Replaces the previous amber.
+   * Used sparingly: pivots, anchors, the slide's "moment". */
+  --accent:       #6C5CE7;
+  --accent-deep:  #5848C5;
+  --accent-soft:  rgba(108, 92, 231, 0.18);
+  --accent-glow:  rgba(108, 92, 231, 0.10);
+
+  /* --- Type scale (px, design coords for 1920×1080) ------------------------ */
+  --t-display:    176px;
+  --t-title:      88px;     /* slide titles; tighter than before */
+  --t-subtitle:   56px;
+  --t-lead:       40px;
+  --t-body:       28px;
+  --t-small:      24px;
+  --t-micro:      14px;     /* mono eyebrows; small + wide-tracked */
+
+  /* --- Motion ------------------------------------------------------------- */
+  --t-fast:    120ms;
+  --t-med:     280ms;
+  --t-slow:    500ms;       /* crisper than the old 900ms */
+  --t-glacial: 900ms;       /* for the quiet variant only */
+  --ease-out:  cubic-bezier(.2,.7,.1,1);
+  --ease-in:   cubic-bezier(.7,0,.84,0);
+
+  /* --- Spacing ----------------------------------------------------------- */
+  --pad-x:        140px;
+  --pad-y:        120px;
+  --pad-bottom:   110px;
+}
+
+/* Reduced motion: collapse all timing to ~instant. Reveals still happen,
+ * they just don't animate. PDF export gets the final state. */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --t-fast:    1ms;
+    --t-med:     1ms;
+    --t-slow:    1ms;
+    --t-glacial: 1ms;
+  }
+}
+
+/* ============================================================================
+ * Reveal system
+ * ----------------------------------------------------------------------------
+ * Items with [data-reveal] start hidden. When a slide receives [data-revealed],
+ * children animate in with a staggered delay based on --reveal-i.
+ * Auto-fires on slide-enter via reveals.js.
+ *
+ * Linear-style motion: crisp and precise (500ms / 80ms stagger), not floaty.
+ * ========================================================================= */
+
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(8px);
+  transition-property: opacity, transform;
+  transition-duration: var(--t-slow), var(--t-slow);
+  transition-timing-function: var(--ease-out), var(--ease-out);
+  transition-delay: calc(var(--reveal-i, 0) * var(--reveal-stagger, 80ms));
+  will-change: opacity, transform;
+}
+[data-revealed] [data-reveal] {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* A "quiet" variant; slower, deeper. Reserved for slide 3 (the wall) so the
+ * three lines drop in like weight rather than animation. */
+[data-reveal-quiet] {
+  opacity: 0;
+  transform: translateY(6px);
+  transition-property: opacity, transform;
+  transition-duration: var(--t-glacial), var(--t-glacial);
+  transition-timing-function: var(--ease-out), var(--ease-out);
+  transition-delay: calc(var(--reveal-i, 0) * var(--reveal-stagger-quiet, 500ms));
+  will-change: opacity, transform;
+}
+[data-revealed] [data-reveal-quiet] {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ============================================================================
+ * Hairlines; Linear leans on these for structural rhythm
+ * ========================================================================= */
+.hairline {
+  background: var(--rule-strong);
+  height: 1px;
+  width: 100%;
+  border: 0;
+}
